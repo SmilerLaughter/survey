@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.MonthExcelDao">
+	<insert id="add" parameterType="MonthExcel">
+		insert into monthexcels(surveyId,url,fileDate) values (#{surveyId},#{url},#{fileDate})
+	</insert>
+	
+	<select id="getUrl" parameterType="int" resultType="String">
+		select url from monthexcels where surveyId=#{id} order by fileDate desc
+	</select>
+</mapper>

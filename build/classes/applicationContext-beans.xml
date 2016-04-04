@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<!-- 配置任务 -->
+	<bean id = "jobDetailBean" class = "org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean = "monthStatistic"/>
+		</property>
+		<property name="targetMethod">
+			<value>statistic</value>
+		</property>
+	</bean>
+	
+	<bean id = "monthStatistic" class = "survey.quartz.MonthStatistic">
+		<property name="monthStatisticService" ref="monthStatisticService"></property>
+	</bean>
+	
+	<!-- cron触发器，设置石英任务的调度策略 -->
+	<bean id = "cronTriggerBean" class = "org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="jobDetailBean"></property>
+		<property name="cronExpression">
+			<value>20 5 * * * ?</value>
+		</property>
+	</bean>
+	
+
+	<!-- 调度工厂bean，激活触发器 -->
+	<bean class = "org.springframework.scheduling.quartz.SchedulerFactoryBean" autowire="no" lazy-init="false">
+		<property name="triggers">
+			<list>
+				<ref bean = "cronTriggerBean"/>
+			</list>
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.RoleDao">
+
+	<insert id="add" parameterType="Role" useGeneratedKeys="true" keyProperty="roleId">
+		insert into roles(roleName,roleDesc) values(#{roleName},#{roleDesc})
+	</insert>
+
+	<update id="delete" parameterType="int">
+		delete from roles where roleId = #{roleId}
+	</update>
+	
+	<select id="getAll" resultType="Role">
+		select * from roles 
+	</select>
+	
+	
+	<select id="getById" parameterType="int" resultType="Role">
+		select * from roles where roleId = #{id}
+	</select>
+	
+	<update id="update" parameterType="Role" >
+		update roles set roleName = #{roleName},roleDesc = #{roleDesc} where roleId = #{roleId}
+	</update>
+	
+	<select id="getPermissionsByRoleId" parameterType="int" resultType="Permission">
+		select * from permissions where permissionId in (
+			select permissionId from permission_role_link where roleId = #{roleId}
+		)
+	</select>
+	
+	<select id="getOtherPermissions" parameterType="int" resultType="Permission">
+		select * from permissions where permissionId not in (
+			select permissionId from permission_role_link where roleId = #{roleId}
+		)
+	</select>
+	
+	<insert id="addRolePermissions" parameterType="java.util.List">
+		insert into permission_role_link(permissionId,roleId) values
+		<foreach collection="list" item = "item" index = "index" separator=",">
+			(#{item.permissionId} ,#{item.roleId})
+			
+		</foreach>
+	</insert>
+	
+	<update id="deleteLinksByRoleId" parameterType="int">
+		delete from permission_role_link where roleId = #{id}
+	</update>
+	
+	<select id="getRolesByUserId" parameterType="int" resultType="Role">
+		select * from roles where roleId in(
+			select roleId from role_user_link where userId = #{id}
+		)
+	</select>
+	
+	<select id="getOtherRolesByUserId" parameterType="int" resultType="Role">
+		select * from roles where roleId not in(
+			select roleId from role_user_link where userId = #{id}
+		)
+	</select>
+	
+	<update id="deleteLinksByUserId" parameterType="int">
+		delete from role_user_link where userId = #{id}
+	</update>
+	
+	<insert id="addRoleUsers" parameterType="java.util.List">
+		insert into role_user_link(userId,roleId) values
+		<foreach collection="list" item = "item" index = "index" separator=",">
+			(#{item.userId} ,#{item.roleId})
+			
+		</foreach>
+	</insert>
+	
+</mapper>
+	

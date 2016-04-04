@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.QuestionDao">
+
+
+	<select id="getQuestionsByPageId" parameterType="int" resultType="Question">
+		select * from questions where pageId = #{id}
+	</select>
+	
+	<insert id = "add" parameterType="Question" useGeneratedKeys="true" keyProperty="questionId">
+		insert into questions(questionTypeId,title,otherType,isMaxtri,pageId) values (#{questionTypeId},#{title},#{otherType},
+		#{isMaxtri},#{pageId})
+	</insert>
+
+	<select id = "getById" resultType="Question" parameterType="int">
+		select * from questions where questionId = #{id}
+	</select>
+	
+	<update id="delete" parameterType="Question">
+		delete from questions where questionId = #{questionId}
+	</update>
+	
+	<update id = "update" parameterType="Question">
+		update questions set title = #{title},otherType = #{otherType} where questionId = #{questionId}
+	</update>
+</mapper>

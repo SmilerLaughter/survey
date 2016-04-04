@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.OtherOptionDao">
+	<insert id="addByBach" parameterType="java.util.List">
+		insert into otheroptions(content,questionId) values
+		<foreach collection="list" item = "item" index = "index" separator=",">
+			(#{item.content} ,#{item.questionId})
+			
+		</foreach>
+	</insert>
+	
+	<select id="getOptionsByQuestionId" parameterType="int" resultType="OtherOption">
+		select * from otheroptions where questionId = #{id}
+	</select>
+	
+	
+	<update id = "deleteOptionsByQuestionId" parameterType="int">
+		delete from otheroptions where questionId = #{id}
+	</update>
+</mapper>
+
+

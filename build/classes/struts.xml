@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+	
+<struts >
+<!-- 	<constant name="struts.ui.theme" value="simple"></constant> -->
+	<constant name="struts.custom.i18n.resources" value="UploadAction"></constant>
+
+	<package name="survey.action" namespace="/" extends="struts-default,jfreechart-default">
+		
+		<interceptors>
+			<interceptor name="permissionInterceptor" class="survey.interceptor.PermissionInterceptor"></interceptor>
+			<interceptor name="loginInterceptor" class="survey.interceptor.LoginInterceptor"></interceptor>
+			<interceptor-stack name="survey">
+				<interceptor-ref name="loginInterceptor"></interceptor-ref>
+				<interceptor-ref name="permissionInterceptor"></interceptor-ref>
+				<interceptor-ref name="defaultStack">
+					<param name="modelDriven.refreshModelBeforeResult">true</param>
+					<param name="fileUpload.maximumSize">512000</param>
+					<param name="fileUpload.allowedExtensions">.jpg,.jpeg,.png,.gif</param>
+					<param name="fileUpload.allowedTypes">image/jpg,image/jpeg,image/pjpeg,image/png,image/gif</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="survey"></default-interceptor-ref>
+		
+		<global-results>
+			<result name = "designAction" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName"> surveyAction_design</param>
+				<param name = "surveyId">%{surveyId}</param>
+			</result>
+			<result name = "login">/index.jsp</result>	
+		</global-results>
+		
+		
+		<action name="userAction_*" class = "survey.action.UserAction" method = "{1}">
+			<result name = "toRegisterPage">/register.jsp</result>
+			<result name = "reg_success">/index.jsp</result>
+			<result name = "input">/register.jsp</result>
+			<result name = "login_failed">/index.jsp</result>
+			<result name = "success">/WEB-INF/pages/welcome.jsp</result>
+		</action>
+		
+		<action name="surveyAction_*" class = "survey.action.SurveyAction" method = "{1}">
+			<result name = "create">/WEB-INF/pages/design.jsp</result>
+			<result name = "login">/index.jsp</result>	
+			<result name = "design"> /WEB-INF/pages/design.jsp</result>
+			<result name = "toListPage">/WEB-INF/pages/surveylist.jsp</result>
+			<result name = "updatePage">/WEB-INF/pages/updateSurvey.jsp</result>
+			<result name = "listQuestionsPage">/WEB-INF/pages/listQuestions.jsp</result>
+			<result name = "listPageAction" type = "redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">surveyAction_toListPage</param>
+			</result>
+			
+			<result name = "login">/index.jsp</result>	
+		</action>
+		
+		<action name = "pageAction_*" class = "survey.action.PageAction" method = "{1}">
+			<result name = "addPage">/WEB-INF/pages/addPage.jsp</result>
+		</action>
+		
+		<action name = "questionAction_*" class = "survey.action.QuestionAction" method = "{1}">
+			<result name = "toAddQuestionPage">/WEB-INF/pages/questionTypes.jsp</result>
+			<result name = "1">/WEB-INF/pages/questionType1_4.jsp</result>
+			<result name = "2">/WEB-INF/pages/questionType1_4.jsp</result>
+			<result name = "3">/WEB-INF/pages/questionType1_4.jsp</result>
+			<result name = "4">/WEB-INF/pages/questionType1_4.jsp</result>
+			<result name = "5">/WEB-INF/pages/questionType5.jsp</result>
+			<result name = "6">/WEB-INF/pages/questionType6.jsp</result>
+			<result name = "7">/WEB-INF/pages/questionType7_9.jsp</result>
+			<result name = "8">/WEB-INF/pages/questionType7_9.jsp</result>
+			<result name = "9">/WEB-INF/pages/questionType7_9.jsp</result>
+		</action>
+		<action name="uploadAction_*" class = "survey.action.UploadAction" method = "{1}">
+			<result name = "addLogoPage"> /WEB-INF/pages/addLogo.jsp</result>
+			<result name = "input"> /WEB-INF/pages/addLogo.jsp</result>
+		</action>	
+		
+		<action name="pageMoveAndCopyAction_*" class = "survey.action.PageMoveAndCopyAction" method = "{1}">
+			<result name = "moveOrCopyPaage">/WEB-INF/pages/moveOrCopyPage.jsp</result>
+		</action>
+		
+		<action name = "doSurveyAction_*" class = "survey.action.DoSurveyAction" method = "{1}">
+			<result name = "listOpenSurveysPage">/WEB-INF/pages/listOpenSurveys.jsp</result>
+			<result name = "pageofSurvey">/WEB-INF/pages/pageofSurvey.jsp</result>
+			<result name = "returnToListAction" type = "redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName"> doSurveyAction_toListOpenSurveys</param>
+			</result>
+		</action>
+
+		<action name="statisticAction" class = "survey.action.StatisticAction">
+			<result name = "success" type = "chart">
+				<param name="height">700</param>
+				<param name="width">1000</param>
+			</result>
+			<result name = "input">/index.jsp</result>
+		</action>
+		
+		<action name = "statisticMaxtrixAction" class = "survey.action.StatisticMaxtrixAction">
+			<result name = "success">/WEB-INF/pages/maxtrixStatistic.jsp</result>
+		</action>
+		
+		<action name="imformationCollectionAction" class = "survey.action.ImformationCollectionAction">
+			<result name = "success" type = "stream">
+				<param name="contentType"> application/vnd.ms-excel</param>
+				<param name ="inputName">inputStream</param>
+				<param name="bufferSize">1024</param>
+			</result>
+		</action>
+		
+		<action name="permissionAction_*" class = "survey.action.PermissionAction" method = "{1}">
+			<result name = "input"> /WEB-INF/pages/addPermission.jsp</result>
+			<result name = "addPermissionPage">/WEB-INF/pages/addPermission.jsp</result>
+			<result name = "listPermissionsPage">/WEB-INF/pages/listPermissions.jsp</result>
+			<result name = "toListPermissionAction" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">permissionAction_toListPermissionsPage</param>
+			</result>
+		</action>
+		
+		<action name="roleAction_*" class = "survey.action.RoleAction" method = "{1}" >
+			<result name = "addOrUpdateRolePage">/WEB-INF/pages/addOrUpdateRole.jsp</result>
+			<result name = "listRolesPage">/WEB-INF/pages/listRoles.jsp</result>
+			<result name = "listRoleAction" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">roleAction_toListRolesPage</param>
+			</result>
+		</action>
+		
+		<action name="authorizeAction_*" class = "survey.action.AuthorizeAction" method = "{1}">
+			<result name = "authorizePage">/WEB-INF/pages/authorizePage.jsp</result>
+			<result name = "updateAuthorizationPage">/WEB-INF/pages/updateAuthorization.jsp</result>
+			<result name = "authorizeAction" type = "redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">authorizeAction_toAuthorizePage</param>
+			</result>
+		</action>
+	</package>
+	
+</struts>

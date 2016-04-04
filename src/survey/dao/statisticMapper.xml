@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.StatisticDao">
+	<select id="getPersonCountOfAnswerOption" parameterType="int" resultType="long">
+		select count(DISTINCT(uuId)) from answers_option where questionId = #{id}
+	</select>
+	
+	<select id="getPersonCountOfAnswerMaxtrix" parameterType="int" resultType="long">
+		select count(DISTINCT(uuId)) from answers_maxtrix where questionid = #{id}
+	</select>
+	
+	<select id="getOptionStatic" parameterType="int" resultType="OptionStatistic">
+		SELECT options.content,options.optionId ,cou.optionCount FROM OPTIONS,(SELECT COUNT(DISTINCT UUID) optionCount 
+		FROM answers_option WHERE optionId = #{optionId} )cou  WHERE optionId = #{optionId}
+	</select>
+	
+	<select id="getCountOfOther" resultType="long" parameterType="int">
+		select count(DISTINCT(uuId)) from answers_option where questionId = #{id} and optionId =  0
+		
+	</select>
+	
+	<select id="getMaxtriCount" parameterType="MaxtrixStatistic" resultType="long">
+		select count(distinct(uuId)) from answers_maxtrix where maxtrixColId = #{maxtrixColId} and maxtrixRowId = #{maxtrixRowId}
+		<if test="maxtrixOptionId != null">
+			and maxtrixOptionId = #{maxtrixOptionId}
+		</if>
+	</select>
+	
+	<select id="getUuIds" parameterType="int" resultType="String">
+		SELECT DISTINCT (UUID) FROM answers_maxtrix  WHERE  answers_maxtrix.questionId   IN (
+			SELECT questionId FROM questions WHERE pageId IN(
+				SELECT pageId FROM pages WHERE surveyId = #{id}
+			)
+		)
+		UNION SELECT DISTINCT (UUID) FROM answers_option  WHERE  answers_option.questionId IN (
+			SELECT questionId FROM questions WHERE pageId IN(
+				SELECT pageId FROM pages WHERE surveyId = #{id}
+			)
+		)
+		
+		UNION SELECT DISTINCT (UUID) FROM answers_text  WHERE  answers_text.questionId IN (
+			SELECT questionId FROM questions WHERE pageId IN(
+				SELECT pageId FROM pages WHERE surveyId = #{id}
+			)
+		)
+		ORDER BY UUID
+	</select>
+	
+	<select id="getOptionAnswers" parameterType="String" resultType="AnswerOption">
+		select * from answers_option where uuId = #{id}
+	</select>
+	
+	<select id="getMaxtrixAnswers" parameterType="String" resultType="AnswerMaxtrix">
+		select * from answers_maxtrix where uuId = #{id}
+	</select>
+	
+	<select id="getTextAnswers" parameterType="String" resultType="AnswerText">
+		select * from answers_text where uuId = #{id}
+	</select>
+	
+</mapper>

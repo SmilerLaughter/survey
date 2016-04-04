@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.SurveyDao">
+	<select id = "getSurveysByUserId" parameterType="int" resultType="Survey">
+		select surveyId,title,preText,nextText,exitText,doneText,createTime,userId,closed from surveys where userId = #{id}
+	</select>
+	
+	<insert id="add" parameterType="Survey" useGeneratedKeys="true" keyProperty="surveyId" >
+		insert into surveys(title,preText,nextText,exitText,doneText,createTime,userId,closed) values (#{title},
+		#{preText},#{nextText},#{exitText},#{doneText} ,#{createTime},#{userId},#{closed})
+	</insert>
+	
+	<select id="getById" parameterType="int" resultType="Survey" >
+		select surveyId,title,preText,nextText,exitText,doneText,createTime,userId,closed,logoPath from surveys where surveyId = #{id}
+	</select>
+	
+	<update id="update" parameterType="Survey">
+		update surveys set title = #{title},preText=#{preText},nextText = #{nextText},exitText = #{exitText},doneText = #{doneText} where surveyId = #{surveyId}
+	</update>
+	
+	<update id="swichStatus" parameterType="Survey">
+		update surveys set closed = 
+		<if test="closed == true">
+			false
+		</if> 
+		<if test="closed == false">
+			true
+		</if>
+		where surveyId = #{surveyId}
+	</update>
+	
+	<update id="delete">
+		delete from surveys where surveyId = #{id}
+	</update>	
+	
+	<update id="updateLogoPath" parameterType="Survey">
+		update surveys set logoPath = #{logoPath} where surveyId = #{surveyId}
+	</update>
+	
+	<select id="getOtherSurveys" parameterType="Survey" resultType="Survey">
+		select * from surveys where userId = #{userId} and surveyId != #{surveyId}
+	</select>
+	
+	<select id="getOpenSurveys" resultType="Survey">
+		select * from surveys where closed = false
+	</select>
+	
+	<select id="getMinOrder" parameterType="int" resultType="float">
+		select min(orderNo) from pages where surveyId = #{id}	
+	</select>
+	
+	<select id = "getMaxOrder"  parameterType="int" resultType="float">
+		select max(orderNo) from pages where surveyId = #{id}
+	</select>
+	
+	<select id="getAll" resultType="Survey">
+		select * from surveys 
+	</select>
+	
+</mapper>

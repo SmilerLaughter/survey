@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.PermissionDao">
+
+	<insert id="add" parameterType="Permission" useGeneratedKeys="true" keyProperty="permissionId">
+		insert into permissions(permissionName,permissionDesc,url,position,permissionNum) values (#{permissionName},#{permissionDesc},
+		#{url},#{position},#{permissionNum})
+	</insert>
+
+	<update id="delete" parameterType="int">
+		delete from permissions where permissionId = #{id}
+	</update>
+	
+	<select id="getAll" resultType="Permission">
+		select * from permissions 
+	</select>
+	
+	<select id="getMaxPermissionPositionAndNum" resultType="Permission">
+			SELECT MAX(POSITION) POSITION ,MAX(permissionNum) permissionNum FROM permissions WHERE POSITION = (
+					SELECT MAX(POSITION) FROM permissions
+				)
+	</select>
+	
+	<select id = "isExistTheUrl" parameterType="String" resultType="String" >
+		select url from permissions where url = #{url}
+	</select>
+	
+	<select id="getById" parameterType="int" resultType="Permission">
+		select * from permissions where permissionId = #{id}
+	</select>
+	
+	<update id="update" parameterType="Permission" >
+		update permissions set permissionName = #{permissionName},permissionDesc = #{permissionDesc} ,url = #{url} where permissionId = #{permissionId}
+	</update>
+	
+	<update id="deleteLinksByPermissionId" parameterType="int">
+	 delete from permission_role_link where permissionId = #{id}
+	</update>
+	
+	<update id="swichStatus" parameterType="Permission">
+		update permissions set open =
+		<if test="open==true">
+			false
+		</if>
+		<if test="open==false">
+			true
+		</if>
+		where permissionId = #{permissionId}
+	</update>
+	
+	<select id="getMaxPosition" resultType="int">
+		select max(position) from permissions 
+	</select>
+</mapper>
+	

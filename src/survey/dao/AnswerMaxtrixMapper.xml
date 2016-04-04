@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.AnswerMaxtrixDao">
+	
+	<update id="deleteByQuestionId" parameterType="int">
+		delete from answers_maxtrix where questionId = #{id}
+	</update>
+	
+	<insert id="addByBach" parameterType="java.util.List">
+		insert into answers_maxtrix(questionId ,maxtrixRowId,maxtrixColId ,maxtrixOptionId,uuId) values
+		<foreach collection="list" item = "item" index = "index" separator=",">
+			(#{item.questionId} ,#{item.maxtrixRowId} ,#{item.maxtrixColId} ,#{item.maxtrixOptionId},#{item.uuId})
+		</foreach>
+	</insert>
+
+	
+</mapper>

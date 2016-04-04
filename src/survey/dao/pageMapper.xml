@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="survey.dao.PageDao">
+	<insert id="add" parameterType="Page" useGeneratedKeys="true" keyProperty="pageId" >
+		insert into pages(title,description,surveyId) values(#{title} ,#{description},#{surveyId})
+	</insert>
+	
+	<select id="getPagesBySurveyId" parameterType="int" resultType="Page" >
+		select * from pages where surveyId = #{id} order by orderNo asc
+	</select>
+	
+	<select id = "getById" resultType="Page" parameterType="int">
+		select * from pages where pageId = #{id}
+	</select>
+	
+	<update id="update" parameterType="Page">
+		update pages set title = #{title} ,description = #{description} where pageId = #{pageId}
+	</update>
+
+	<update id="delete" parameterType="int">
+		delete from pages where pageId = #{id}
+	</update>
+	
+	<update id="updatePageOrder" parameterType="Page">
+		update pages set orderNo = #{orderNo} where pageId = #{pageId}
+ 	</update>
+ 	
+ 	<select id="getPrePages" parameterType="Page" resultType="Page">
+ 		select * from pages where orderNo &lt; #{orderNo} and surveyId = #{surveyId} order by orderNo desc
+ 	</select>
+ 	
+ 	<select id="getNextPages" parameterType="Page" resultType="Page">
+ 		select * from pages where orderNo &gt; #{orderNo} and surveyId = #{surveyId} order by orderNo asc
+ 	</select>
+ 	
+ 	<select id="getNextPagesByOrderNoAndPageId" parameterType="Page" resultType="Page">
+ 		select * from pages where orderNo &gt; (
+ 			select orderNo from pages where pageId = #{pageId}
+ 			) and surveyId = #{surveyId} order by orderNo asc 
+ 	</select>
+ 	
+ 	<select id="getPrePagesByOrderNoAndPageId" parameterType="Page" resultType="Page">
+ 		 select * from pages where orderNo &lt; (
+ 			select orderNo from pages where pageId = #{pageId}
+ 			) and surveyId = #{surveyId} order by orderNo desc
+ 	</select>
+ 	
+<!--  	<select id="getCountOfOrderLtTarget" parameterType="float"> -->
+<!--  		select count(*) from pages where orderNo &lt; #{id} -->
+<!--  	</select> -->
+ 	
+<!--  	<select id="getCountOfOrderGtTarget" parameterType="float"> -->
+<!--  		select count(*) from pages where orderNo &gt; #{id} -->
+<!--  	</select> -->
+ 	
+</mapper>
